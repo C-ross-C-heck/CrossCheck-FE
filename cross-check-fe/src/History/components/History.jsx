@@ -31,6 +31,7 @@ const History = () => {
 
     fetchChatHistories();
   }, []);
+  
   const handleDeleteHistory = async (chatRoomId) => {
     try{
       const response = await fetch(`https://qrwrsukdh4.execute-api.ap-northeast-2.amazonaws.com/del_history`,{
