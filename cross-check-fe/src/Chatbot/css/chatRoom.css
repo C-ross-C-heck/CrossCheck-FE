@@ -40,6 +40,7 @@ input, button, textarea {
       width: calc(100vw - 300px);
       margin: 20px;
       padding: 20px;
+      left: 300px
 }
 
 .chat-messages {
@@ -51,7 +52,6 @@ input, button, textarea {
       max-width: 100%;
       margin: 0;
       padding: 0 0 20px 0;
-      left: 100px;
 }
 
 .message {
