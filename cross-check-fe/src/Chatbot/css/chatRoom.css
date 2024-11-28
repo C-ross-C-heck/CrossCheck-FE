@@ -20,6 +20,18 @@ input, button, textarea {
     font-weight: 700;
 }
 
+.chatbot-container {
+      position: fixed;
+      top: 0;
+      left: 300px; /* Sidebar width */
+      right: 0;
+      bottom: 0;
+      background-color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+}
+
 .chat-room {
       display: flex;
       flex-direction: column;
