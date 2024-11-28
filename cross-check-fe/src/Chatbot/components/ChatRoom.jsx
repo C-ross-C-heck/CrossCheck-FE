@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import '../css/chatRoom.css';
 import Sidebar from '../../Sidebar/components/Sidebar';
 
 const ChatRoom = () => {
       <Sidebar />
+      const chatRoomId = useParams();
       const [messages, setMessages] = useState([
             {
                   type: 'bot',
@@ -26,6 +28,7 @@ const ChatRoom = () => {
             landlordResidence: '',
         });
       const [isComposing, setIsComposing] = useState(false);
+      const [shouldFetchMessages, setShouldFetchMessages] = useState(false);
       const messagesEndRef = useRef(null);
       const fileInputRef = useRef(null);
 
@@ -38,11 +41,16 @@ const ChatRoom = () => {
       }, [messages]);
 
       useEffect(()=>{
-            const fetchChatMessages = async() =>{
-                  const chatRoomId = sessionStorage.getItem('currentChatRoomId');
-                  if(!chatRoomId) return;
+                  fetchChatMessages();
+                  setShouldFetchMessages(false);
+      },[shouldFetchMessages,chatRoomId]);
 
-                  const response = await fetch(`https://qrwrsukdh4.execute-api.ap-northeast-2.amazonaws.com/getDetailedHistory?chatRoomId=${chatRoomId}`,{
+
+      const fetchChatMessages = async() =>{
+                  
+            if(!chatRoomId) return;
+            try{
+                  const response = await fetch(`https://qrwrsukdh4.execute-api.ap-northeast-2.amazonaws.com/getDetailedHistory?chatRoomId=${chatRoomId.chatId}`,{
                         method:'GET',
                         headers :{
                               'Content-Type':'application/json',
@@ -53,14 +61,8 @@ const ChatRoom = () => {
                         
                         // 메시지를 user와 bot 타입으로 저장
                         const newMessages = data.flatMap(msg => [
-                            {
-                                type: 'user',
-                                content: msg.content
-                            },
-                            {
-                                type: 'bot',
-                                content: msg.claudeResponse
-                            }
+                            { type: 'user', content: msg.content },
+                            { type: 'bot', content: msg.claudeResponse}
                         ]);
             
                         // 상태 업데이트
@@ -71,13 +73,15 @@ const ChatRoom = () => {
                               );
                               return uniqueMessages;
                           });
-                    } else {
+                    }
+                  else {
                         console.error('Failed to fetch chat messages');
                     }
-            };
-            fetchChatMessages();
-      },[]);
-
+                  
+            }catch(error){
+                  console.log("error fetching chat message",error);
+            }
+      };
 
 
       const handleComposition = (event) => {
@@ -225,7 +229,7 @@ const ChatRoom = () => {
             else if (inputStep === 4) {
                   const fileData = selectedFile ? await convertFileToBase64(selectedFile) : null;
                   const payload = {
-                        chatRoomId: sessionStorage.getItem('currentChatRoomId'),
+                        chatRoomId: chatRoomId.chatId,
                         content: input.trim(),
                         type: selectedFile ? 'file' : 'text',
                         file: fileData?.base64Data, // base64Data 직접 전달
@@ -246,7 +250,7 @@ const ChatRoom = () => {
                   try {
                         const fileData = selectedFile ? await convertFileToBase64(selectedFile) : null;
                         const payload = {
-                            chatRoomId: sessionStorage.getItem('currentChatRoomId'),
+                            chatRoomId: chatRoomId.chatId,
                             content: input.trim(),
                             type: selectedFile ? 'file' : 'text',
                             file: fileData?.base64Data, // base64Data 직접 전달
