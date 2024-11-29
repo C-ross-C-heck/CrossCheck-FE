@@ -38,7 +38,7 @@ const Posting = () => {
       }
 
       const result = await response.json();
-      alert(result.body); // 서버로부터의 응답 메시지 표시
+      alert("게시글 등록 완료!!"); // 서버로부터의 응답 메시지 표시
       navigate("/Community"); // CommunityBoard.jsx로 이동
     } catch (error) {
       console.error('Error posting data:', error);

@@ -439,10 +439,7 @@ const ChatRoom = () => {
                                     type="submit"
                                     className={`send-button ${!input.trim() && !selectedFile ? 'disabled' : ''}`}
                                     disabled={!input.trim() && !selectedFile}
-                              >
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                          <path d="M12 20L4 12L12 4L13.425 5.425L7.825 11H20V13H7.825L13.425 18.575L12 20Z" fill="white" transform="rotate(180 12 12)" />
-                                    </svg>
+                              ><img src="../sendIcon.png" alt="Send" style={{ width: '24px', height: '24px' }} />
                               </button>
                         </form>
                   </div>
