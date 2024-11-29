@@ -6,6 +6,7 @@ import '../css/history.css';
 const History = () => {
   const navigate = useNavigate();
   const [chatHistories, setChatHistories] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchChatHistories = async () => {
@@ -58,6 +59,45 @@ const History = () => {
     navigate(`/chatbot/${chatRoomId}`);
   }
 
+  const handleSearch = async (event) => {
+    if (event.key === 'Enter') {
+      try {
+        const userId = sessionStorage.getItem('userId');
+        let response;
+        if(searchTerm.trim()===""){
+          // 검색어가 비어 있을 경우 전체 히스토리 요청
+          response = await fetch(`https://qrwrsukdh4.execute-api.ap-northeast-2.amazonaws.com/getHistory?userId=${userId}`, {
+            method: 'GET', // GET 메서드 사용
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          });
+        }
+        else{
+          response = await fetch(`https://qrwrsukdh4.execute-api.ap-northeast-2.amazonaws.com/search_chat_room`, { // Lambda 함수의 실제 URL 입력
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ title: searchTerm, userId }), // 요청 본문에 title과 userId 포함
+          });
+
+        }
+
+  
+        if (!response.ok) {
+          throw new Error('Failed to fetch chat histories');
+        }
+  
+        const data = await response.json();
+        setChatHistories(data); // 검색된 데이터로 상태 업데이트
+      }catch (error) {
+        console.error('Error searching chat histories:', error);
+        alert('채팅 기록 검색 중 오류가 발생했습니다.'); // 사용자에게 알림
+        }
+      }
+    };
+
   return (
     <div className="history-container">
       <Sidebar />
@@ -76,6 +116,9 @@ const History = () => {
               type="text" 
               placeholder="Search your chat"
               className="search-input"
+              value={searchTerm}
+              onChange={(e)=>setSearchTerm(e.target.value)}
+              onKeyDown={handleSearch}
             />
           </div>
         </div>

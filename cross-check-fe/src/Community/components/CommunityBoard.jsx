@@ -26,13 +26,13 @@ const CommunityBoard = ({posts}) => {
       </div>
 
       <div className="board-contents">
-        {posts.map((post) => (
+        {posts.map((post,index) => (
           <div
             className="post-item"
             key={post.free_post_id}
             onClick={() => navigate(`/post/${post.free_post_id}`, { state: { post } })}
           >
-            <div>11</div>
+            <div>{index+1}</div>
             <div className="post-title">{post.title}</div>
             <div>{post.userId}</div>
             <div>{formatDate(post.createdAt)}</div>
